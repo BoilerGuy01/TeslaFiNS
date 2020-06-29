@@ -1,0 +1,30 @@
+# controller
+ND-controller-NAME = TeslaFi NodeServer Controller
+CMD-ctl-QUERY"-NAME = Query
+CMD-ctl-DISCOVER-NAME = Re-Discover
+CMD-ctl-UPDATE_PROFILE-NAME = Update Profile
+CMD-ctl-REMOVE_NOTICES_ALL-NAME = Remove All Notices
+CMD-ctl-REMOVE_NOTICE_TEST-NAME = Remove Notice Test
+CMD-SET_DEBUG_LEVEL-NAME = Set Debug Level
+ST-ctl-ST-NAME = NodeServer Online
+ST-ctl-GV0-NAME = Debug Level
+ST-ctl-GV1-NAME = Vehicle State
+ST-ctl-GV2-NAME = State-of-Charge (SoC)
+ST-ctl-GV3-NAME = Est. Range
+ST-ctl-GV4-NAME = Charge Limit
+ST-ctl-GV5-NAME = Rated Range
+ST-ctl-GV6-NAME = Odometer
+CMD-ctl-WAKE-NAME = Wake
+CMD-ctl-HONK-NAME = Honk
+CMD-ctl-FLASH-NAME = Flash Indicators
+CMD-ctl-SET_CHARGE_LEVEL-NAME = Charge Limit
+
+# Car State
+EN_I_CAR_STATE-0 = Sleeping
+EN_I_CAR_STATE-1 = Idling
+EN_I_CAR_STATE-2 = Driving
+
+# Debug level
+EN_I_DEBUG_LEVEL-10 = Debug
+EN_I_DEBUG_LEVEL-20 = Info
+EN_I_DEBUG_LEVEL-30 = Warning
