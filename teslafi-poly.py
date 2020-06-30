@@ -231,7 +231,7 @@ class Controller(polyinterface.Controller):
     def lock(self, command=None):
        LOGGER.debug("Lock command received");
        LOGGER.debug('command = {}'.format(command))
-       send_teslafi_command(self, "lock")
+       self.send_teslafi_command("door_lock")
 
     def set_charge_level(self, command=None):
        LOGGER.debug('command = {}'.format(command))

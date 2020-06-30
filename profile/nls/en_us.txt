@@ -17,6 +17,7 @@ ST-ctl-GV6-NAME = Odometer
 CMD-ctl-WAKE-NAME = Wake
 CMD-ctl-HONK-NAME = Honk
 CMD-ctl-FLASH-NAME = Flash Indicators
+CMD-ctl-LOCK-NAME = Lock
 CMD-ctl-SET_CHARGE_LEVEL-NAME = Charge Limit
 
 # Car State

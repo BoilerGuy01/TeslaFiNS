@@ -28,6 +28,7 @@
               <cmd id="WAKE" />
               <cmd id="HONK" />
               <cmd id="FLASH" />
+              <cmd id="LOCK" />
               <cmd id="SET_CHARGE_LEVEL">
                 <p id="" editor="chargeLevel" init="GV4" optional="F"/>
               </cmd>
