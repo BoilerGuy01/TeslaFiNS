@@ -15,55 +15,60 @@ LOGGER.setLevel(logging.WARNING)
 LOGGER.setLevel(logging.INFO)
 LOGGER.setLevel(logging.DEBUG)
 _PARM_API_KEY_NAME = "API_KEY"
+BASE_URL = "https://www.teslafi.com/feed.php?token="
 
 def pollTeslaFi(self):
-        url = 'https://www.teslafi.com/feed.php?token=%s' % self.API_KEY
         LOGGER.info('polling TeslaFi')
-        LOGGER.debug('shortPoll - going to check TeslaFi API @ {}'.format(url))
-        r = requests.get(url)
-        LOGGER.debug('r     = {}'.format(r.json()))
-        rJSON = r.json()
-        LOGGER.debug('rJSON = {}'.format(rJSON))
+        try:
+          url = '{0}{1}'.format(BASE_URL, self.API_KEY)
+          LOGGER.debug('shortPoll - going to check TeslaFi API @ {}'.format(url))
+          r = requests.get(url)
+          LOGGER.debug('r     = {}'.format(r.json()))
+          rJSON = r.json()
+          LOGGER.debug('rJSON = {}'.format(rJSON))
 
-        # get car data
-        carState = rJSON['carState']
-        odometer = rJSON['odometer']
-        est_battery_range = rJSON['est_battery_range']
-        usable_battery_level = rJSON['usable_battery_level']
-        charge_limit_soc = rJSON['charge_limit_soc']
-        ideal_battery_range = rJSON['ideal_battery_range']
+          # get car data
+          carState = rJSON['carState']
+          odometer = rJSON['odometer']
+          est_battery_range = rJSON['est_battery_range']
+          usable_battery_level = rJSON['usable_battery_level']
+          charge_limit_soc = rJSON['charge_limit_soc']
+          ideal_battery_range = rJSON['ideal_battery_range']
 
-        LOGGER.debug('carState = {}'.format(carState))
-        LOGGER.debug('odometer = {}'.format(odometer))
-        LOGGER.debug('est_battery_range = {}'.format(est_battery_range))
-        LOGGER.debug('usable_battery_level = {}'.format(usable_battery_level))
-        LOGGER.debug('charge_limit_soc = {}'.format(charge_limit_soc))
-        LOGGER.debug('ideal_battery_range= {}'.format(ideal_battery_range))
+          LOGGER.debug('carState = {}'.format(carState))
+          LOGGER.debug('odometer = {}'.format(odometer))
+          LOGGER.debug('est_battery_range = {}'.format(est_battery_range))
+          LOGGER.debug('usable_battery_level = {}'.format(usable_battery_level))
+          LOGGER.debug('charge_limit_soc = {}'.format(charge_limit_soc))
+          LOGGER.debug('ideal_battery_range= {}'.format(ideal_battery_range))
 
-        # set node values
-        if carState == 'Sleeping':
-          LOGGER.debug('Setting car to asleep (0)')
-          self.setDriver('GV1', 0)
-        elif carState == 'Idling':
-          LOGGER.debug('Setting car to idling (1)')
-          self.setDriver('GV1', 1)
-        else:
-          LOGGER.debug('Setting car to driving (2)')
-          self.setDriver('GV1', 2)
-        if usable_battery_level is not None:
-          self.setDriver('GV2', usable_battery_level)
-        if est_battery_range is not None:
-          self.setDriver('GV3', est_battery_range)
-        if charge_limit_soc is not None:
-          self.setDriver('GV4', charge_limit_soc)
-        if ideal_battery_range is not None:
-          self.setDriver('GV5', ideal_battery_range)
-        if odometer is not None:
-          LOGGER.debug('Odometer before rounding = {}'.format(odometer))
-          odometer = round(float(odometer), 2)
-          LOGGER.debug('Odometer after  rounding = {}'.format(odometer))
-          self.setDriver('GV6', odometer)
-        LOGGER.debug('Done setting drivers')
+          # set node values
+          if carState == 'Sleeping':
+            LOGGER.debug('Setting car to asleep (0)')
+            self.setDriver('GV1', 0)
+          elif carState == 'Idling':
+            LOGGER.debug('Setting car to idling (1)')
+            self.setDriver('GV1', 1)
+          else:
+            LOGGER.debug('Setting car to driving (2)')
+            self.setDriver('GV1', 2)
+          if usable_battery_level is not None:
+            self.setDriver('GV2', usable_battery_level)
+          if est_battery_range is not None:
+            self.setDriver('GV3', est_battery_range)
+          if charge_limit_soc is not None:
+            self.setDriver('GV4', charge_limit_soc)
+          if ideal_battery_range is not None:
+            self.setDriver('GV5', ideal_battery_range)
+          if odometer is not None:
+            LOGGER.debug('Odometer before rounding = {}'.format(odometer))
+            odometer = round(float(odometer), 2)
+            LOGGER.debug('Odometer after  rounding = {}'.format(odometer))
+            self.setDriver('GV6', odometer)
+          LOGGER.debug('Done setting drivers')
+        except Exception as err:
+          LOGGER.debug('Exception occurred doing URL request {}'.format(err))
+          LOGGER.error('Excption: {0}'.format(err), exc_info=True)
         return
 
 class Controller(polyinterface.Controller):
@@ -199,29 +204,37 @@ class Controller(polyinterface.Controller):
         self.addCustomParam({'DebugLevel': self.DebugLevel, 'API_KEY': self.API_KEY})
 
     def wake(self, command=None):
-       LOGGER.debug("**** WAKE!!! ******");
+       LOGGER.debug("Wake command received");
        LOGGER.debug('command = {}'.format(command))
-       url = 'https://www.teslafi.com/feed.php?token=%s&command=wake_up' % self.API_KEY
-       LOGGER.info('waking via TeslaFi API @ {}'.format(url))
-       r = requests.get(url)
-       LOGGER.debug('r = {}'.format(r))
-       LOGGER.debug("**** WAKE!!! ******");
+       try:
+         url = '{0}{1}&command=wake_up'.format(BASE_URL, self.API_KEY)
+         LOGGER.debug('waking via TeslaFi API @ {}'.format(url))
+         r = requests.get(url)
+         LOGGER.debug('r = {}'.format(r))
+       except Exception as err:
+         LOGGER.error('Wakeup Exception: {0}'.format(err), exc_info=True)
 
     def honk(self, command=None):
-       LOGGER.debug("**** HONK!!! ******");
+       LOGGER.debug("Honk command received");
        LOGGER.debug('command = {}'.format(command))
-       url = 'https://www.teslafi.com/feed.php?token=%s&command=honk' % self.API_KEY
-       LOGGER.info('honking via TeslaFi API @ {}'.format(url))
-       r = requests.get(url)
-       LOGGER.debug('r = {}'.format(r))
-       LOGGER.debug("**** HONK!!! ******");
+       try:
+         url = '{0}{1}&command=honk'.format(BASE_URL, self.API_KEY)
+         LOGGER.debug('honking via TeslaFi API @ {}'.format(url))
+         r = requests.get(url)
+         LOGGER.debug('r = {}'.format(r))
+       except Exception as err:
+         LOGGER.error('Honk Exception: {0}'.format(err), exc_info=True)
 
     def flash(self, command=None):
+       LOGGER.debug("Flash command received");
        LOGGER.debug('command = {}'.format(command))
-       url = 'https://www.teslafi.com/feed.php?token=%s&command=flash_lights' % self.API_KEY
-       LOGGER.info('flashing indicators via TeslaFi API @ {}'.format(url))
-       r = requests.get(url)
-       LOGGER.debug('r = {}'.format(r))
+       try:
+         url = '{0}{1}&command=flash_lights'.format(BASE_URL, self.API_KEY)
+         LOGGER.debug('flashing indicators via TeslaFi API @ {}'.format(url))
+         r = requests.get(url)
+         LOGGER.debug('r = {}'.format(r))
+       except Exception as err:
+         LOGGER.error('Flash Exception: {0}'.format(err), exc_info=True)
 
     def setOn(self, command):
        self.setDriver('ST', 1)
@@ -234,7 +247,7 @@ class Controller(polyinterface.Controller):
        chargeLimit = command['value']
        LOGGER.debug('chargeLimit = {}'.format(chargeLimit))
        url = 'https://www.teslafi.com/feed.php?token={0}&command=set_charge_limit&charge_limit_soc={1}'.format(self.API_KEY, chargeLimit)
-       LOGGER.info('setting charge level via TeslaFi API @ {}'.format(url))
+       LOGGER.debug('setting charge level via TeslaFi API @ {}'.format(url))
        r = requests.get(url)
        LOGGER.debug('r = {}'.format(r))
        self.setDriver('GV4', chargeLimit)
