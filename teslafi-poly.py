@@ -203,54 +203,49 @@ class Controller(polyinterface.Controller):
         # Make sure they are in the params
         self.addCustomParam({'DebugLevel': self.DebugLevel, 'API_KEY': self.API_KEY})
 
-    def wake(self, command=None):
-       LOGGER.debug("Wake command received");
-       LOGGER.debug('command = {}'.format(command))
+    def send_teslafi_command(self, commandStr):
+       LOGGER.debug('commandStr = {}'.format(commandStr))
        try:
-         url = '{0}{1}&command=wake_up'.format(BASE_URL, self.API_KEY)
-         LOGGER.debug('waking via TeslaFi API @ {}'.format(url))
-         r = requests.get(url)
-         LOGGER.debug('r = {}'.format(r))
-       except Exception as err:
-         LOGGER.error('Wakeup Exception: {0}'.format(err), exc_info=True)
-
-    def honk(self, command=None):
-       LOGGER.debug("Honk command received");
-       LOGGER.debug('command = {}'.format(command))
-       try:
-         url = '{0}{1}&command=honk'.format(BASE_URL, self.API_KEY)
-         LOGGER.debug('honking via TeslaFi API @ {}'.format(url))
-         r = requests.get(url)
-         LOGGER.debug('r = {}'.format(r))
-       except Exception as err:
-         LOGGER.error('Honk Exception: {0}'.format(err), exc_info=True)
-
-    def flash(self, command=None):
-       LOGGER.debug("Flash command received");
-       LOGGER.debug('command = {}'.format(command))
-       try:
-         url = '{0}{1}&command=flash_lights'.format(BASE_URL, self.API_KEY)
-         LOGGER.debug('flashing indicators via TeslaFi API @ {}'.format(url))
+         url = '{0}{1}&command={2}'.format(BASE_URL, self.API_KEY, commandStr)
+         LOGGER.debug('Sending command to TeslaFi API @ {}'.format(url))
          r = requests.get(url)
          LOGGER.debug('r = {}'.format(r))
        except Exception as err:
          LOGGER.error('Flash Exception: {0}'.format(err), exc_info=True)
+
+    def wake(self, command=None):
+       LOGGER.debug("Wake command received");
+       LOGGER.debug('command = {}'.format(command))
+       self.send_teslafi_command("wake_up")
+
+    def honk(self, command=None):
+       LOGGER.debug("Honk command received");
+       LOGGER.debug('command = {}'.format(command))
+       self.send_teslafi_command("honk")
+
+    def flash(self, command=None):
+       LOGGER.debug("Flash command received");
+       LOGGER.debug('command = {}'.format(command))
+       self.send_teslafi_command("flash_lights")
+
+    def lock(self, command=None):
+       LOGGER.debug("Lock command received");
+       LOGGER.debug('command = {}'.format(command))
+       send_teslafi_command(self, "lock")
+
+    def set_charge_level(self, command=None):
+       LOGGER.debug('command = {}'.format(command))
+       chargeLimit = command['value']
+       LOGGER.debug('chargeLimit = {}'.format(chargeLimit))
+       commandStr = 'set_charge_limit&charge_limit_soc={0}'.format(chargeLimit)
+       self.send_teslafi_command(commandStr)
+       self.setDriver('GV4', chargeLimit)
 
     def setOn(self, command):
        self.setDriver('ST', 1)
 
     def setOff(self, command):
        self.setDriver('ST', 0)
-
-    def set_charge_level(self, command=None):
-       LOGGER.debug('command = {}'.format(command))
-       chargeLimit = command['value']
-       LOGGER.debug('chargeLimit = {}'.format(chargeLimit))
-       url = 'https://www.teslafi.com/feed.php?token={0}&command=set_charge_limit&charge_limit_soc={1}'.format(self.API_KEY, chargeLimit)
-       LOGGER.debug('setting charge level via TeslaFi API @ {}'.format(url))
-       r = requests.get(url)
-       LOGGER.debug('r = {}'.format(r))
-       self.setDriver('GV4', chargeLimit)
 
     id = 'controller'
     commands = {
@@ -264,6 +259,7 @@ class Controller(polyinterface.Controller):
         'HONK': honk,
         'FLASH': flash,
         'SET_CHARGE_LEVEL': set_charge_level,
+        'LOCK': lock,
     }
     drivers = [{'driver': 'ST',  'value': 0, 'uom': 2},
                {'driver': 'GV0', 'value': 0, 'uom': 25},
