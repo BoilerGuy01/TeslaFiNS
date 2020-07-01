@@ -17,4 +17,7 @@
  <!-- GV4 -->
   <editor id="chargeLevel">       <range uom="51" subset="50-100" /> </editor>
 
+ <!-- GV7 -->
+  <editor id="doorlocks">        <range uom="25" subset="0,1" nls="EN_I_LOCKS_STATE"/> </editor>
+
 </editors>

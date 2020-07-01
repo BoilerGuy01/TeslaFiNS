@@ -34,6 +34,7 @@ def pollTeslaFi(self):
           usable_battery_level = rJSON['usable_battery_level']
           charge_limit_soc = rJSON['charge_limit_soc']
           ideal_battery_range = rJSON['ideal_battery_range']
+          locked = rJSON['locked']
 
           LOGGER.debug('carState = {}'.format(carState))
           LOGGER.debug('odometer = {}'.format(odometer))
@@ -41,6 +42,7 @@ def pollTeslaFi(self):
           LOGGER.debug('usable_battery_level = {}'.format(usable_battery_level))
           LOGGER.debug('charge_limit_soc = {}'.format(charge_limit_soc))
           LOGGER.debug('ideal_battery_range= {}'.format(ideal_battery_range))
+          LOGGER.debug('locked = {}'.format(locked))
 
           # set node values
           if carState == 'Sleeping':
@@ -60,6 +62,8 @@ def pollTeslaFi(self):
             self.setDriver('GV4', charge_limit_soc)
           if ideal_battery_range is not None:
             self.setDriver('GV5', ideal_battery_range)
+          if locked is not None:
+            self.setDriver('GV7', locked)
           if odometer is not None:
             LOGGER.debug('Odometer before rounding = {}'.format(odometer))
             odometer = round(float(odometer), 2)
@@ -232,6 +236,7 @@ class Controller(polyinterface.Controller):
        LOGGER.debug("Lock command received");
        LOGGER.debug('command = {}'.format(command))
        self.send_teslafi_command("door_lock")
+       self.setDriver('GV7', 1)
 
     def set_charge_level(self, command=None):
        LOGGER.debug('command = {}'.format(command))
@@ -269,6 +274,7 @@ class Controller(polyinterface.Controller):
                {'driver': 'GV4', 'value': 0, 'uom': 51},
                {'driver': 'GV5', 'value': 0, 'uom': 116},
                {'driver': 'GV6', 'value': 0, 'uom': 116},
+               {'driver': 'GV7', 'value': 0, 'uom': 25},
     ]
 
 if __name__ == "__main__":

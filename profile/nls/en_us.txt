@@ -14,6 +14,7 @@ ST-ctl-GV3-NAME = Est. Range
 ST-ctl-GV4-NAME = Charge Limit
 ST-ctl-GV5-NAME = Rated Range
 ST-ctl-GV6-NAME = Odometer
+ST-ctl-GV7-NAME = Door Lock Status
 CMD-ctl-WAKE-NAME = Wake
 CMD-ctl-HONK-NAME = Honk
 CMD-ctl-FLASH-NAME = Flash Indicators
@@ -29,3 +30,7 @@ EN_I_CAR_STATE-2 = Driving
 EN_I_DEBUG_LEVEL-10 = Debug
 EN_I_DEBUG_LEVEL-20 = Info
 EN_I_DEBUG_LEVEL-30 = Warning
+
+# Door Locks State
+EN_I_LOCKS_STATE-0 = Unlocked
+EN_I_LOCKS_STATE-1 = Locked
